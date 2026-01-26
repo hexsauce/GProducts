@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GSpace Beauty - Product Order</title>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #000000;
+      min-height: 100vh;
+      padding: 20px;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url('background.gif');
+      /* Replace with your background GIF */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      opacity: 0.3;
+      z-index: -1;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(218, 165, 32, 0.4);
+      backdrop-filter: blur(10px);
+    }
+
+    .header {
+      background: linear-gradient(180deg, rgba(231, 175, 34, 0.95) 0%, rgba(139, 102, 8, 0.95) 100%);
+      padding: 30px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+      animation: shimmer 3s infinite;
+    }
+
+    .header-logo {
+      width: 120px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+
+    .header-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .header-logo-placeholder {
+      font-size: 3em;
+      filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    @keyframes shimmer {
+
+      0%,
+      100% {
+        transform: translate(0, 0);
+      }
+
+      50% {
+        transform: translate(10%, 10%);
+      }
+    }
+
+    .header h1 {
+      color: white;
+      font-size: 2.2em;
+      margin: 0;
+      position: relative;
+      z-index: 1;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .header p {
+      color: rgba(255, 255, 255, 0.95);
+      font-size: 1em;
+      position: relative;
+      z-index: 1;
+      margin: 0;
+    }
+
+    .content {
+      padding: 40px;
+    }
+
+    .products-section {
+      margin-bottom: 40px;
+    }
+
+    .products-section h2 {
+      color: #DAA520;
+      font-size: 1.8em;
+      margin-bottom: 30px;
+      text-align: center;
+      position: relative;
+      padding-bottom: 15px;
+    }
+
+    .products-section h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #DAA520, transparent);
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .product-card {
+      border: 2px solid #f0f0f0;
+      border-radius: 15px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      position: relative;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(10px);
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      border-color: #DAA520;
+      box-shadow: 0 10px 30px rgba(218, 165, 32, 0.2);
+    }
+
+    .product-card.has-quantity {
+      border-color: #DAA520;
+      border-width: 3px;
+      box-shadow: 0 0 20px rgba(218, 165, 32, 0.4);
+    }
+
+    .product-image-container {
+      width: 100%;
+      height: 250px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+    }
+
+    .product-images {
+      display: flex;
+      height: 100%;
+      transition: transform 0.4s ease;
+    }
+
+    .product-image {
+      min-width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3em;
+      position: relative;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .product-image.placeholder {
+      background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+    }
+
+    .product-image::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(218, 165, 32, 0.1) 0%, rgba(184, 134, 11, 0.1) 100%);
+    }
+
+    .image-nav {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 10;
+    }
+
+    .image-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      border: 2px solid rgba(218, 165, 32, 0.8);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .image-dot.active {
+      background: #DAA520;
+      transform: scale(1.2);
+    }
+
+    .image-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2em;
+      transition: all 0.3s ease;
+      z-index: 10;
+      opacity: 0;
+    }
+
+    .product-card:hover .image-arrow {
+      opacity: 1;
+    }
+
+    .image-arrow:hover {
+      background: rgba(218, 165, 32, 0.9);
+    }
+
+    .image-arrow.left {
+      left: 10px;
+    }
+
+    .image-arrow.right {
+      right: 10px;
+    }
+
+    .product-info {
+      padding: 20px;
+      background: white;
+    }
+
+    .product-name {
+      font-size: 1.3em;
+      font-weight: bold;
+      color: #1a1a1a;
+      margin-bottom: 10px;
+    }
+
+    .product-description {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 15px;
+      font-size: 0.95em;
+    }
+
+    .product-price {
+      font-size: 1.4em;
+      color: #DAA520;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .quantity-selector {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-top: 15px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .quantity-selector label {
+      font-size: 0.9em;
+      color: #666;
+      font-weight: 600;
+    }
+
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-left: auto;
+    }
+
+    .quantity-btn {
+      width: 35px;
+      height: 35px;
+      border: 2px solid #DAA520;
+      background: white;
+      color: #DAA520;
+      border-radius: 8px;
+      font-size: 1.2em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .quantity-btn:hover {
+      background: #DAA520;
+      color: white;
+    }
+
+    .quantity-btn:active {
+      transform: scale(0.95);
+    }
+
+    .quantity-display {
+      width: 50px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.1em;
+      color: #1a1a1a;
+    }
+
+    .order-summary {
+      background: linear-gradient(135deg, #fff9e6 0%, #fff5d6 100%);
+      border: 2px solid #DAA520;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 30px;
+    }
+
+    .order-summary h3 {
+      color: #1a1a1a;
+      font-size: 1.4em;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .order-summary h3::before {
+      content: '🛒';
+      font-size: 1.2em;
+    }
+
+    .summary-items {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: white;
+      border-radius: 8px;
+      border-left: 4px solid #DAA520;
+    }
+
+    .summary-item-name {
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    .summary-item-details {
+      color: #666;
+      font-size: 0.9em;
+    }
+
+    .summary-total {
+      border-top: 2px solid #DAA520;
+      padding-top: 15px;
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .summary-total-label {
+      font-size: 1.3em;
+      font-weight: bold;
+      color: #1a1a1a;
+    }
+
+    .summary-total-amount {
+      font-size: 1.6em;
+      font-weight: bold;
+      color: #DAA520;
+    }
+
+    .empty-cart {
+      text-align: center;
+      color: #999;
+      padding: 20px;
+      font-style: italic;
+    }
+
+    .form-section {
+      background: #f9f9f9;
+      padding: 30px;
+      border-radius: 15px;
+      margin-top: 20px;
+    }
+
+    .form-section h2 {
+      color: #1a1a1a;
+      font-size: 1.6em;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .form-section h2::before {
+      content: '';
+      width: 4px;
+      height: 30px;
+      background: #DAA520;
+      border-radius: 2px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      color: #333;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 0.95em;
+    }
+
+    label .required {
+      color: #DAA520;
+    }
+
+    input,
+    select,
+    textarea {
+      padding: 12px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1em;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #DAA520;
+      box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.1);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, #DAA520 0%, #B8860B 100%);
+      color: white;
+      border: none;
+      padding: 18px 50px;
+      font-size: 1.1em;
+      font-weight: bold;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 30px;
+      width: 100%;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 5px 15px rgba(218, 165, 32, 0.3);
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(218, 165, 32, 0.4);
+    }
+
+    .submit-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .error-message {
+      background: #fee;
+      border-left: 4px solid #c33;
+      padding: 15px;
+      border-radius: 5px;
+      color: #c33;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .payment-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .payment-modal.active {
+      display: flex;
+    }
+
+    .payment-modal-content {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(218, 165, 32, 0.5);
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .payment-modal-content h2 {
+      color: #DAA520;
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+
+    .success-icon {
+      font-size: 4em;
+      margin-bottom: 20px;
+      animation: bounce 0.5s ease;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.2);
+      }
+    }
+
+    .payment-info {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 15px;
+      margin: 20px 0;
+    }
+
+    .payment-info p {
+      color: #333;
+      line-height: 1.8;
+      margin-bottom: 10px;
+    }
+
+    .payment-info strong {
+      color: #DAA520;
+    }
+
+    .qr-code-container {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      border: 3px solid #DAA520;
+      margin: 20px 0;
+      display: inline-block;
+    }
+
+    .qr-code-container img {
+      max-width: 300px;
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .close-modal-btn {
+      background: linear-gradient(135deg, #DAA520 0%, #B8860B 100%);
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      font-size: 1.1em;
+      font-weight: bold;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 20px;
+    }
+
+    .close-modal-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(218, 165, 32, 0.4);
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 1.8em;
+      }
+
+      .products-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      .summary-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <img class="header-logo" src="./logo.jpg" style="width: 190px; height: 190px;"></img>
+    </div>
+
+    <div class="content">
+      <div class="products-section">
+        <h2>Select Your Products</h2>
+
+        <div class="products-grid">
+          <!-- RENEWING WHITE RANGE -->
+          <div class="product-card" data-product="white-001" data-price="225" data-name="Renewal White Moisturizer"
+            data-code="White-001">
+            <div class="product-image-container">
+              <button class="image-arrow left" onclick="changeImage(this, -1)">‹</button>
+              <button class="image-arrow right" onclick="changeImage(this, 1)">›</button>
+              <div class="product-images">
+                <div class="product-image placeholder">💎</div>
+                <!-- Add more images by uncommenting and replacing with actual image URLs -->
+                <!-- <div class="product-image" style="background-image: url('path/to/image2.jpg')"></div> -->
+                <!-- <div class="product-image" style="background-image: url('path/to/image3.jpg')"></div> -->
+              </div>
+              <div class="image-nav">
+                <div class="image-dot active" onclick="goToImage(this, 0)"></div>
+                <!-- Add dots for additional images -->
+                <!-- <div class="image-dot" onclick="goToImage(this, 1)"></div> -->
+                <!-- <div class="image-dot" onclick="goToImage(this, 2)"></div> -->
+              </div>
+            </div>
+            <div class="product-info">
+              <div class="product-name">Renewal White Moisturizer</div>
+              <div class="product-description">
+                Premium whitening moisturizer (30g) that brightens and evens skin tone while providing deep hydration
+                for radiant, glowing skin.
+              </div>
+              <div class="product-price">RM 225</div>
+              <div class="quantity-selector">
+                <label>Quantity:</label>
+                <div class="quantity-controls">
+                  <button type="button" class="quantity-btn minus" data-action="decrease">−</button>
+                  <div class="quantity-display">0</div>
+                  <button type="button" class="quantity-btn plus" data-action="increase">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="product-card" data-product="white-002" data-price="228" data-name="UV 15 Hydro Lotion"
+            data-code="White-002">
+            <div class="product-image-container">
+              <button class="image-arrow left" onclick="changeImage(this, -1)">‹</button>
+              <button class="image-arrow right" onclick="changeImage(this, 1)">›</button>
+              <div class="product-images">
+                <div class="product-image placeholder">☀️</div>
+              </div>
+              <div class="image-nav">
+                <div class="image-dot active" onclick="goToImage(this, 0)"></div>
+              </div>
+            </div>
+            <div class="product-info">
+              <div class="product-name">UV 15 Hydro Lotion</div>
+              <div class="product-description">
+                Hydrating UV protection lotion (100ml) with SPF 15. Shields skin from harmful UV rays while maintaining
+                moisture balance.
+              </div>
+              <div class="product-price">RM 228</div>
+              <div class="quantity-selector">
+                <label>Quantity:</label>
+                <div class="quantity-controls">
+                  <button type="button" class="quantity-btn minus" data-action="decrease">−</button>
+                  <div class="quantity-display">0</div>
+                  <button type="button" class="quantity-btn plus" data-action="increase">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="product-card" data-product="white-003" data-price="199" data-name="Whitening UV 3 in 1"
+            data-code="White-003">
+            <div class="product-image-container">
+              <button class="image-arrow left" onclick="changeImage(this, -1)">‹</button>
+              <button class="image-arrow right" onclick="changeImage(this, 1)">›</button>
+              <div class="product-images">
+                <div class="product-image placeholder">✨</div>
+              </div>
+              <div class="image-nav">
+                <div class="image-dot active" onclick="goToImage(this, 0)"></div>
+              </div>
+            </div>
+            <div class="product-info">
+              <div class="product-name">Whitening UV 3 in 1</div>
+              <div class="product-description">
+                Multi-functional whitening cream (30g) combining UV protection, brightening, and moisturizing in one
+                powerful formula.
+              </div>
+              <div class="product-price">RM 199</div>
+              <div class="quantity-selector">
+                <label>Quantity:</label>
+                <div class="quantity-controls">
+                  <button type="button" class="quantity-btn minus" data-action="decrease">−</button>
+                  <div class="quantity-display">0</div>
+                  <button type="button" class="quantity-btn plus" data-action="increase">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="product-card" data-product="white-004" data-price="139" data-name="Hydrating White Mask"
+            data-code="White-004">
+            <div class="product-image-container">
+              <button class="image-arrow left" onclick="changeImage(this, -1)">‹</button>
+              <button class="image-arrow right" onclick="changeImage(this, 1)">›</button>
+              <div class="product-images">
+                <div class="product-image placeholder">🎭</div>
+              </div>
+              <div class="image-nav">
+                <div class="image-dot active" onclick="goToImage(this, 0)"></div>
+              </div>
+            </div>
+            <div class="product-info">
+              <div class="product-name">Hydrating White Mask</div>
+              <div class="product-description">
+                Intensive whitening mask (30g) that deeply hydrates while brightening complexion. Perfect for weekly
+                skincare routine.
+              </div>
+              <div class="product-price">RM 139</div>
+              <div class="quantity-selector">
+                <label>Quantity:</label>
+                <div class="quantity-controls">
+                  <button type="button" class="quantity-btn minus" data-action="decrease">−</button>
+                  <div class="quantity-display">0</div>
+                  <button type="button" class="quantity-btn plus" data-action="increase">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TENDER REPAIR RANGE -->
+          <div class="product-card" data-product="tender-001" data-price="140" data-name="Tender Cleansing Milk"
+            data-code="Tender-001">
+            <div class="product-image-container">
+              <button class="image-arrow left" onclick="changeImage(this, -1)">‹</button>
+              <button class="image-arrow right" onclick="changeImage(this, 1)">›</button>
+              <div class="product-images">
+                <div class="product-image placeholder">🥛</div>
+              </div>
+              <div class="image-nav">
+                <div class="image-dot active" onclick="goToImage(this, 0)"></div>
+              </div>
+            </div>
+            <div class="product-info">
+              <div class="product-name">Tender Cleansing Milk</div>
+              <div class="product-description">
+                Gentle cleansing milk (150ml) that removes impurities while nourishing sensitive skin. Perfect for daily
+                use.
+              </div>
+              <div class="product-price">RM 140</div>
+              <div class="quantity-selector">
+                <label>Quantity:</label>
+                <div class="quantity-controls">
+                  <button type="button" class="quantity-btn minus" data-action="decrease">−</button>
+                  <div class="quantity-display">0</div>
+                  <button type="button" class="quantity-btn plus" data-action="increase">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="product-card" data-product="tender-002" data-price="180" data-name="Balancing Softener"
+            data-code="Tender-002">
+            <div class="product-image-container">
+              <button class="image-arrow left" onclick="changeImage(this, -1)">‹</button>
+              <button class="image-arrow right" onclick="changeImage(this, 1)">›</button>
+              <div class="product-images">
+                <div class="product-image placeholder">💧</div>
+              </div>
+              <div class="image-nav">
+                <div class="image-dot active" onclick="goToImage(this, 0)"></div>
+              </div>
+            </div>
+            <div class="product-info">
+              <div class="product-name">Balancing Softener</div>
+              <div class="product-description">
+                pH-balancing toner (150ml) that softens and prepares skin for better absorption of skincare products.
+              </div>
+              <div class="product-price">RM 180</div>
+              <div class="quantity-selector">
+                <label>Quantity:</label>
+                <div class="quantity-controls">
+                  <button type="button" class="quantity-btn minus" data-action="decrease">−</button>
+                  <div class="quantity-display">0</div>
+                  <button type="button" class="quantity-btn plus" data-action="increase">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="product-card" data-product="tender-003" data-price="199" data-name="Hydrating Repair Moisturizer"
+            data-code="Tender-003">
+            <div class="product-image-container">
+              <button class="image-arrow left" onclick="changeImage(this, -1)">‹</button>
+              <button class="image-arrow right" onclick="changeImage(this, 1)">›</button>
+              <div class="product-images">
+                <div class="product-image placeholder">🧴</div>
+              </div>
+              <div class="image-nav">
+                <div class="image-dot active" onclick="goToImage(this, 0)"></div>
+              </div>
+            </div>
+            <div class="product-info">
+              <div class="product-name">Hydrating Repair Moisturizer</div>
+              <div class="product-description">
+                Lightweight moisturizer (30ml) specially formulated for younger skin. Repairs and hydrates for healthy,
+                youthful glow.
+              </div>
+              <div class="product-price">RM 199</div>
+              <div class="quantity-selector">
+                <label>Quantity:</label>
+                <div class="quantity-controls">
+                  <button type="button" class="quantity-btn minus" data-action="decrease">−</button>
+                  <div class="quantity-display">0</div>
+                  <button type="button" class="quantity-btn plus" data-action="increase">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="product-card" data-product="tender-004" data-price="228"
+            data-name="Hydrating Repair Moisturizer Plus" data-code="Tender-004">
+            <div class="product-image-container">
+              <button class="image-arrow left" onclick="changeImage(this, -1)">‹</button>
+              <button class="image-arrow right" onclick="changeImage(this, 1)">›</button>
+              <div class="product-images">
+                <div class="product-image placeholder">🌟</div>
+              </div>
+              <div class="image-nav">
+                <div class="image-dot active" onclick="goToImage(this, 0)"></div>
+              </div>
+            </div>
+            <div class="product-info">
+              <div class="product-name">Hydrating Repair Moisturizer Plus</div>
+              <div class="product-description">
+                Advanced moisturizer (30g) for mature skin. Enhanced formula with anti-aging properties for superior
+                hydration and repair.
+              </div>
+              <div class="product-price">RM 228</div>
+              <div class="quantity-selector">
+                <label>Quantity:</label>
+                <div class="quantity-controls">
+                  <button type="button" class="quantity-btn minus" data-action="decrease">−</button>
+                  <div class="quantity-display">0</div>
+                  <button type="button" class="quantity-btn plus" data-action="increase">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- OILY RANGE -->
+          <div class="product-card" data-product="oily-001" data-price="145" data-name="Soft Gel Cleanser"
+            data-code="Oily-001">
+            <div class="product-image-container">
+              <button class="image-arrow left" onclick="changeImage(this, -1)">‹</button>
+              <button class="image-arrow right" onclick="changeImage(this, 1)">›</button>
+              <div class="product-images">
+                <div class="product-image placeholder">🧼</div>
+              </div>
+              <div class="image-nav">
+                <div class="image-dot active" onclick="goToImage(this, 0)"></div>
+              </div>
+            </div>
+            <div class="product-info">
+              <div class="product-name">Soft Gel Cleanser</div>
+              <div class="product-description">
+                Oil-control gel cleanser (150ml) that deeply cleanses pores without stripping skin. Ideal for oily and
+                combination skin.
+              </div>
+              <div class="product-price">RM 145</div>
+              <div class="quantity-selector">
+                <label>Quantity:</label>
+                <div class="quantity-controls">
+                  <button type="button" class="quantity-btn minus" data-action="decrease">−</button>
+                  <div class="quantity-display">0</div>
+                  <button type="button" class="quantity-btn plus" data-action="increase">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="product-card" data-product="oily-002" data-price="139" data-name="Spotless Gel Mask"
+            data-code="Oily-002">
+            <div class="product-image-container">
+              <button class="image-arrow left" onclick="changeImage(this, -1)">‹</button>
+              <button class="image-arrow right" onclick="changeImage(this, 1)">›</button>
+              <div class="product-images">
+                <div class="product-image placeholder">🎯</div>
+              </div>
+              <div class="image-nav">
+                <div class="image-dot active" onclick="goToImage(this, 0)"></div>
+              </div>
+            </div>
+            <div class="product-info">
+              <div class="product-name">Spotless Gel Mask</div>
+              <div class="product-description">
+                Targeted gel mask (30ml) for blemish-prone skin. Controls excess oil and minimizes pores for clear,
+                refined complexion.
+              </div>
+              <div class="product-price">RM 139</div>
+              <div class="quantity-selector">
+                <label>Quantity:</label>
+                <div class="quantity-controls">
+                  <button type="button" class="quantity-btn minus" data-action="decrease">−</button>
+                  <div class="quantity-display">0</div>
+                  <button type="button" class="quantity-btn plus" data-action="increase">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="order-summary" id="orderSummary">
+          <h3>Order Summary</h3>
+          <div class="summary-items" id="summaryItems">
+            <div class="empty-cart">No items selected. Add products to your order above.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2>Customer Information</h2>
+        <div class="error-message" id="errorMessage"></div>
+
+        <form id="orderForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Full Name <span class="required">*</span></label>
+              <input type="text" name="customerName" required>
+            </div>
+
+            <div class="form-group">
+              <label>Email Address <span class="required">*</span></label>
+              <input type="email" name="customerEmail" required>
+            </div>
+
+            <div class="form-group">
+              <label>Phone Number <span class="required">*</span></label>
+              <input type="tel" name="customerPhone" required>
+            </div>
+
+            <div class="form-group">
+              <label>Agent Code <span class="required">*</span></label>
+              <input type="text" name="agentCode" required placeholder="Enter your agent's code">
+            </div>
+
+            <div class="form-group full-width">
+              <label>Delivery Address <span class="required">*</span></label>
+              <textarea name="address" required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Payment Method</label>
+              <select name="paymentMethod">
+                <option value="DuitNow QR Code">DuitNow QR Code</option>
+              </select>
+            </div>
+
+            <div class="form-group full-width">
+              <label>Special Instructions (Optional)</label>
+              <textarea name="notes" placeholder="Any special requests or notes..."></textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn" disabled>Place Order</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================
+    // EMAILJS CONFIGURATION
+    // Replace these with your actual EmailJS credentials
+    // ============================================
+    const EMAILJS_CONFIG = {
+      publicKey: 'oVMEbGnN00AlgNUFp',
+      serviceId: 'service_tipq7a9',
+      customerTemplateId: 'customer_template',
+      adminTemplateId: 'admin_template'
+    };
+
+    // ============================================
+    // AGENT CODE TO EMAIL MAPPING
+    // Add your agents here: 'AGENT_CODE': 'agent@email.com'
+    // ============================================
+    const AGENT_DIRECTORY = {
+      'admin': 'sonderistic95@gmail.com',
+      'andy': 'andygriffingonzalez996@gmail.com',
+      'mj': 'mjbesin2008@gmail.com'
+    };
+
+    // Initialize EmailJS
+    emailjs.init(EMAILJS_CONFIG.publicKey);
+
+    // ============================================
+    // IMAGE CAROUSEL FUNCTIONS
+    // ============================================
+    function changeImage(button, direction) {
+      const container = button.closest('.product-image-container');
+      const imagesWrapper = container.querySelector('.product-images');
+      const images = imagesWrapper.querySelectorAll('.product-image');
+      const dots = container.querySelectorAll('.image-dot');
+
+      if (images.length <= 1) return;
+
+      let currentIndex = 0;
+      dots.forEach((dot, index) => {
+        if (dot.classList.contains('active')) currentIndex = index;
+      });
+
+      let newIndex = currentIndex + direction;
+      if (newIndex < 0) newIndex = images.length - 1;
+      if (newIndex >= images.length) newIndex = 0;
+
+      imagesWrapper.style.transform = `translateX(-${newIndex * 100}%)`;
+
+      dots.forEach(dot => dot.classList.remove('active'));
+      dots[newIndex].classList.add('active');
+    }
+
+    function goToImage(dot, index) {
+      const container = dot.closest('.product-image-container');
+      const imagesWrapper = container.querySelector('.product-images');
+      const dots = container.querySelectorAll('.image-dot');
+
+      imagesWrapper.style.transform = `translateX(-${index * 100}%)`;
+
+      dots.forEach(d => d.classList.remove('active'));
+      dot.classList.add('active');
+    }
+
+    // ============================================
+    // PRODUCT CART FUNCTIONS
+    // ============================================
+    const productCards = document.querySelectorAll('.product-card');
+    const orderForm = document.getElementById('orderForm');
+    const errorMessage = document.getElementById('errorMessage');
+    const submitBtn = document.getElementById('submitBtn');
+    const summaryItems = document.getElementById('summaryItems');
+
+    const cart = {};
+
+    function updateQuantity(card, change) {
+      const productId = card.dataset.product;
+      const price = parseFloat(card.dataset.price);
+      const name = card.dataset.name;
+      const code = card.dataset.code;
+      const display = card.querySelector('.quantity-display');
+
+      let currentQty = parseInt(display.textContent) || 0;
+      currentQty = Math.max(0, currentQty + change);
+
+      display.textContent = currentQty;
+
+      if (currentQty > 0) {
+        card.classList.add('has-quantity');
+        cart[productId] = {
+          name: name,
+          code: code,
+          quantity: currentQty,
+          price: price,
+          total: price * currentQty
+        };
+      } else {
+        card.classList.remove('has-quantity');
+        delete cart[productId];
+      }
+
+      updateOrderSummary();
+    }
+
+    function updateOrderSummary() {
+      const cartItems = Object.values(cart);
+
+      if (cartItems.length === 0) {
+        summaryItems.innerHTML = '<div class="empty-cart">No items selected. Add products to your order above.</div>';
+        submitBtn.disabled = true;
+      } else {
+        let totalAmount = 0;
+        let summaryHTML = '';
+
+        cartItems.forEach(item => {
+          totalAmount += item.total;
+          summaryHTML += `
+                        <div class="summary-item">
+                            <div>
+                                <div class="summary-item-name">${item.name}</div>
+                                <div class="summary-item-details">${item.code} | RM ${item.price} × ${item.quantity}</div>
+                            </div>
+                            <div style="font-weight: bold; color: #DAA520;">RM ${item.total}</div>
+                        </div>
+                    `;
+        });
+
+        summaryHTML += `
+                    <div class="summary-total">
+                        <div class="summary-total-label">Total Amount:</div>
+                        <div class="summary-total-amount">RM ${totalAmount}</div>
+                    </div>
+                `;
+
+        summaryItems.innerHTML = summaryHTML;
+        submitBtn.disabled = false;
+      }
+    }
+
+    productCards.forEach(card => {
+      const minusBtn = card.querySelector('[data-action="decrease"]');
+      const plusBtn = card.querySelector('[data-action="increase"]');
+
+      minusBtn.addEventListener('click', () => updateQuantity(card, -1));
+      plusBtn.addEventListener('click', () => updateQuantity(card, 1));
+    });
+
+    orderForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (Object.keys(cart).length === 0) {
+        errorMessage.textContent = 'Please select at least one product before placing your order.';
+        errorMessage.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+
+      errorMessage.style.display = 'none';
+
+      // Disable submit button and show loading
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending Order...';
+
+      const formData = new FormData(orderForm);
+      const orderData = Object.fromEntries(formData.entries());
+
+      const cartItems = Object.values(cart);
+      const totalAmount = cartItems.reduce((sum, item) => sum + item.total, 0);
+
+      // Format product list for emails
+      let productsText = '';
+      let productsHTML = '';
+      cartItems.forEach(item => {
+        productsText += `${item.name} (${item.code}) × ${item.quantity} = RM ${item.total}\n`;
+        productsHTML += `<tr>
+                    <td style="padding: 10px; border-bottom: 1px solid #eee;">${item.name} (${item.code})</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">RM ${item.price}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right; font-weight: bold;">RM ${item.total}</td>
+                </tr>`;
+      });
+
+      try {
+
+        let agentCodeLowerCase = orderData.agentCode.toLowerCase();
+
+        if (!(agentCodeLowerCase in AGENT_DIRECTORY) || !AGENT_DIRECTORY[agentCodeLowerCase]) {
+          errorMessage.textContent = 'Agent code does not exist. Please enter a valid agent code.';
+          errorMessage.style.display = 'block';
+          return;
+        }
+
+        const agentParams = {
+          to_email: 'info@gspacebeauty.com',
+          customer_name: orderData.customerName,
+          customer_email: orderData.customerEmail,
+          customer_phone: orderData.customerPhone,
+          customer_address: orderData.address,
+          agent_code: orderData.agentCode,
+          payment_method: orderData.paymentMethod,
+          special_notes: orderData.notes || 'None',
+          products_list: productsText,
+          products_html: productsHTML,
+          total_amount: totalAmount,
+          order_date: new Date().toLocaleString('en-MY', { timeZone: 'Asia/Kuala_Lumpur' }),
+          cc: AGENT_DIRECTORY[agentCodeLowerCase]
+        };
+
+        await emailjs.send(
+          EMAILJS_CONFIG.serviceId,
+          EMAILJS_CONFIG.adminTemplateId,
+          agentParams,
+          EMAILJS_CONFIG.publicKey
+        );
+
+        // Email 2: Send confirmation to Customer
+        const customerParams = {
+          to_email: orderData.customerEmail,
+          customer_name: orderData.customerName,
+          customer_address: orderData.address,
+          payment_method: orderData.paymentMethod,
+          agent_code: orderData.agentCode,
+          products_list: productsText,
+          products_html: productsHTML,
+          total_amount: totalAmount,
+          order_date: new Date().toLocaleString('en-MY', { timeZone: 'Asia/Kuala_Lumpur' }),
+          cc: 'info@gspacebeauty.com'
+        };
+
+        await emailjs.send(
+          EMAILJS_CONFIG.serviceId,
+          EMAILJS_CONFIG.customerTemplateId,
+          customerParams,
+          EMAILJS_CONFIG.publicKey
+        );
+
+
+        // Reset form
+        orderForm.reset();
+        productCards.forEach(card => {
+          card.classList.remove('has-quantity');
+          card.querySelector('.quantity-display').textContent = '0';
+        });
+        Object.keys(cart).forEach(key => delete cart[key]);
+        updateOrderSummary();
+
+      } catch (error) {
+        console.error('Email sending failed:', error);
+        errorMessage.textContent = 'Failed to send order. Please try again or contact us directly at 088-725626.';
+        errorMessage.style.display = 'block';
+      } finally {
+        // Re-enable submit button
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Place Order';
+      }
+    });
+
+    updateOrderSummary();
+  </script>
+</body>
+
+</html>

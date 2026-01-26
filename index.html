@@ -1297,7 +1297,6 @@
           products_html: productsHTML,
           total_amount: totalAmount,
           order_date: new Date().toLocaleString('en-MY', { timeZone: 'Asia/Kuala_Lumpur' }),
-          cc: 'info@gspacebeauty.com'
         };
 
         await emailjs.send(
@@ -1307,6 +1306,7 @@
           EMAILJS_CONFIG.publicKey
         );
 
+        alert('Order notified! Look for an email from info@gspacebeauty.com to continue with payment')
 
         // Reset form
         orderForm.reset();

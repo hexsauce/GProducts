@@ -673,6 +673,39 @@
       box-shadow: 0 5px 15px rgba(218, 165, 32, 0.4);
     }
 
+    .agent-banner {
+      display: none;
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 30px;
+      padding: 7px 20px;
+      color: white;
+      font-size: 0.9em;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      position: relative;
+      z-index: 1;
+      backdrop-filter: blur(4px);
+    }
+
+    .agent-banner.visible {
+      display: inline-block;
+    }
+
+    .agent-banner span {
+      opacity: 0.8;
+      font-weight: 400;
+      margin-right: 4px;
+    }
+
+    input[name="agentCode"]:read-only {
+      background: #f5f0e0;
+      color: #8B6914;
+      cursor: not-allowed;
+      border-color: #DAA520;
+      font-weight: 600;
+    }
+
     @media (max-width: 768px) {
       .header h1 {
         font-size: 1.8em;
@@ -699,6 +732,7 @@
   <div class="container">
     <div class="header">
       <img class="header-logo" src="./logo.jpg" style="width: 190px; height: 190px;"></img>
+      <div id="agentBanner" class="agent-banner"><span>🔗 You're ordering through</span> <strong id="agentBannerName"></strong></div>
     </div>
 
     <div class="content">
@@ -1113,6 +1147,29 @@
 
     // Initialize EmailJS
     emailjs.init(EMAILJS_CONFIG.publicKey);
+
+    // ============================================
+    // URL PARAM AGENT CODE AUTO-FILL
+    // ============================================
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const agentParam = (params.get('agent') || '').toLowerCase().trim();
+
+      if (agentParam && agentParam in AGENT_DIRECTORY) {
+        const agentInput = document.querySelector('input[name="agentCode"]');
+        if (agentInput) {
+          agentInput.value = agentParam;
+          agentInput.readOnly = true;
+        }
+
+        const banner = document.getElementById('agentBanner');
+        const bannerName = document.getElementById('agentBannerName');
+        if (banner && bannerName) {
+          bannerName.textContent = agentParam.charAt(0).toUpperCase() + agentParam.slice(1) + "\u2019s page";
+          banner.classList.add('visible');
+        }
+      }
+    })();
 
     // ============================================
     // IMAGE CAROUSEL FUNCTIONS

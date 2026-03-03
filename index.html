@@ -1160,6 +1160,7 @@
         if (agentInput) {
           agentInput.value = agentParam;
           agentInput.readOnly = true;
+          agentInput.closest('.form-group').style.display = 'none';
         }
 
         const banner = document.getElementById('agentBanner');

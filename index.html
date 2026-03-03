@@ -516,6 +516,17 @@
       min-height: 100px;
     }
 
+    .payment-hint {
+      margin-top: 10px;
+      padding: 10px 14px;
+      background: #fffbea;
+      border-left: 3px solid #DAA520;
+      border-radius: 6px;
+      color: #7a5c00;
+      font-size: 0.88em;
+      line-height: 1.5;
+    }
+
     .submit-btn {
       background: linear-gradient(135deg, #DAA520 0%, #B8860B 100%);
       color: white;
@@ -1096,6 +1107,9 @@
               <select name="paymentMethod">
                 <option value="DuitNow QR Code">DuitNow QR Code</option>
               </select>
+              <div class="payment-hint">
+                📧 After placing your order, a payment QR code will be sent to your email. Please check your inbox to complete payment.
+              </div>
             </div>
 
             <div class="form-group full-width">

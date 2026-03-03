@@ -732,7 +732,7 @@
   <div class="container">
     <div class="header">
       <img class="header-logo" src="./logo.jpg" style="width: 190px; height: 190px;"></img>
-      <div id="agentBanner" class="agent-banner"><span>🔗 You're ordering through</span> <strong id="agentBannerName"></strong></div>
+      <div id="agentBanner" class="agent-banner"><span>You're ordering with</span> <strong id="agentBannerName"></strong></div>
     </div>
 
     <div class="content">
@@ -1166,7 +1166,7 @@
         const banner = document.getElementById('agentBanner');
         const bannerName = document.getElementById('agentBannerName');
         if (banner && bannerName) {
-          bannerName.textContent = agentParam.charAt(0).toUpperCase() + agentParam.slice(1) + "\u2019s page";
+          bannerName.textContent = agentParam.charAt(0).toUpperCase() + agentParam.slice(1);
           banner.classList.add('visible');
         }
       }
